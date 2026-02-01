@@ -1,25 +1,40 @@
-import os
-import platform
-
-from django import get_version as django_version
-from django.shortcuts import render
+from django.shortcuts import render, redirect
+from django.db.models import Sum
 from django.utils import timezone
-
+from .models import Transaction, Category
+from .forms import TransactionForm
+import datetime
 
 def home(request):
-    """Render the landing screen with loader and environment details."""
-    host_name = request.get_host().lower()
-    agent_brand = "AppWizzy" if host_name == "appwizzy.com" else "Flatlogic"
-    now = timezone.now()
-
+    today = timezone.now().date()
+    first_day_of_month = today.replace(day=1)
+    
+    # Calculate stats
+    total_income = Transaction.objects.filter(type='income').aggregate(Sum('amount'))['amount__sum'] or 0
+    total_expense = Transaction.objects.filter(type='expense').aggregate(Sum('amount'))['amount__sum'] or 0
+    balance = total_income - total_expense
+    
+    monthly_income = Transaction.objects.filter(type='income', date__gte=first_day_of_month).aggregate(Sum('amount'))['amount__sum'] or 0
+    monthly_expense = Transaction.objects.filter(type='expense', date__gte=first_day_of_month).aggregate(Sum('amount'))['amount__sum'] or 0
+    
+    recent_transactions = Transaction.objects.select_related('category').order_by('-date', '-created_at')[:10]
+    
+    if request.method == 'POST':
+        form = TransactionForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('home')
+    else:
+        form = TransactionForm()
+    
     context = {
-        "project_name": "New Style",
-        "agent_brand": agent_brand,
-        "django_version": django_version(),
-        "python_version": platform.python_version(),
-        "current_time": now,
-        "host_name": host_name,
-        "project_description": os.getenv("PROJECT_DESCRIPTION", ""),
-        "project_image_url": os.getenv("PROJECT_IMAGE_URL", ""),
+        'total_income': total_income,
+        'total_expense': total_expense,
+        'balance': balance,
+        'monthly_income': monthly_income,
+        'monthly_expense': monthly_expense,
+        'recent_transactions': recent_transactions,
+        'form': form,
+        'current_month': today.strftime('%B %Y'),
     }
-    return render(request, "core/index.html", context)
+    return render(request, 'core/index.html', context)

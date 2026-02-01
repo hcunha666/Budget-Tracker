@@ -1,21 +1,86 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Outfit:wght@600;700&display=swap');
 
 :root {
-    --bg-color-start: #6a11cb;
-    --bg-color-end: #2575fc;
-    --text-color: #ffffff;
-    --card-bg-color: rgba(255, 255, 255, 0.01);
-    --card-border-color: rgba(255, 255, 255, 0.1);
+    --bg-color: #F8FAFC;
+    --slate-800: #1E293B;
+    --slate-500: #64748B;
+    --emerald: #10B981;
+    --rose: #F43F5E;
+    --indigo: #6366F1;
+    --violet: #8B5CF6;
 }
+
 body {
-    margin: 0;
+    background-color: var(--bg-color);
     font-family: 'Inter', sans-serif;
-    background: linear-gradient(45deg, var(--bg-color-start), var(--bg-color-end));
-    color: var(--text-color);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
-    text-align: center;
-    overflow: hidden;
-    position: relative;
+    color: var(--slate-800);
 }
+
+h1, h2, h3, .h1, .h2, .h3 {
+    font-family: 'Outfit', sans-serif;
+    font-weight: 700;
+}
+
+.hero-gradient {
+    background: linear-gradient(135deg, var(--indigo) 0%, var(--violet) 100%);
+    color: white;
+    padding: 3rem 0;
+    border-radius: 0 0 2rem 2rem;
+    margin-bottom: -4rem;
+}
+
+.stats-card {
+    background: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 1.25rem;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s ease;
+}
+
+.stats-card:hover {
+    transform: translateY(-2px);
+}
+
+.income-text { color: var(--emerald); }
+.expense-text { color: var(--rose); }
+
+.btn-primary-gradient {
+    background: linear-gradient(135deg, var(--indigo) 0%, var(--violet) 100%);
+    border: none;
+    color: white;
+    font-weight: 600;
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.75rem;
+}
+
+.btn-primary-gradient:hover {
+    opacity: 0.9;
+    color: white;
+}
+
+.transaction-row {
+    border-left: 4px solid transparent;
+    transition: all 0.2s ease;
+}
+
+.transaction-row.income { border-left-color: var(--emerald); }
+.transaction-row.expense { border-left-color: var(--rose); }
+
+.table {
+    border-collapse: separate;
+    border-spacing: 0 0.5rem;
+}
+
+.table tr {
+    background: white;
+    border-radius: 0.75rem;
+}
+
+.table td {
+    padding: 1rem;
+    vertical-align: middle;
+}
+
+.table td:first-child { border-radius: 0.75rem 0 0 0.75rem; }
+.table td:last-child { border-radius: 0 0.75rem 0.75rem 0; }

@@ -1,145 +1,147 @@
-{% extends "base.html" %}
-
-{% block title %}{{ project_name }}{% endblock %}
-
-{% block head %}
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
-<style>
-  :root {
-    --bg-color-start: #6a11cb;
-    --bg-color-end: #2575fc;
-    --text-color: #ffffff;
-    --card-bg-color: rgba(255, 255, 255, 0.01);
-    --card-border-color: rgba(255, 255, 255, 0.1);
-  }
-
-  * {
-    box-sizing: border-box;
-  }
-
-  body {
-    margin: 0;
-    font-family: 'Inter', sans-serif;
-    background: linear-gradient(45deg, var(--bg-color-start), var(--bg-color-end));
-    color: var(--text-color);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
-    text-align: center;
-    overflow: hidden;
-    position: relative;
-  }
-
-  body::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'><path d='M-10 10L110 10M10 -10L10 110' stroke-width='1' stroke='rgba(255,255,255,0.05)'/></svg>");
-    animation: bg-pan 20s linear infinite;
-    z-index: -1;
-  }
-
-  @keyframes bg-pan {
-    0% {
-      background-position: 0% 0%;
-    }
-
-    100% {
-      background-position: 100% 100%;
-    }
-  }
-
-  main {
-    padding: 2rem;
-  }
-
-  .card {
-    background: var(--card-bg-color);
-    border: 1px solid var(--card-border-color);
-    border-radius: 16px;
-    padding: 2.5rem 2rem;
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    box-shadow: 0 12px 36px rgba(0, 0, 0, 0.25);
-  }
-
-  h1 {
-    font-size: clamp(2.2rem, 3vw + 1.2rem, 3.2rem);
-    font-weight: 700;
-    margin: 0 0 1.2rem;
-    letter-spacing: -0.02em;
-  }
-
-  p {
-    margin: 0.5rem 0;
-    font-size: 1.1rem;
-    opacity: 0.92;
-  }
-
-  .loader {
-    margin: 1.5rem auto;
-    width: 56px;
-    height: 56px;
-    border: 4px solid rgba(255, 255, 255, 0.25);
-    border-top-color: #fff;
-    border-radius: 50%;
-    animation: spin 1s linear infinite;
-  }
-
-  @keyframes spin {
-    to {
-      transform: rotate(360deg);
-    }
-  }
-
-  .runtime code {
-    background: rgba(0, 0, 0, 0.25);
-    padding: 0.15rem 0.45rem;
-    border-radius: 4px;
-    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-  }
-
-  .sr-only {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    padding: 0;
-    margin: -1px;
-    overflow: hidden;
-    clip: rect(0, 0, 0, 0);
-    border: 0;
-  }
-
-  footer {
-    position: absolute;
-    bottom: 1rem;
-    width: 100%;
-    text-align: center;
-    font-size: 0.85rem;
-    opacity: 0.75;
-  }
-</style>
-{% endblock %}
+{% extends 'base.html' %}
+{% load static %}
 
 {% block content %}
-<main>
-  <div class="card">
-    <h1>Analyzing your requirements and generating your app…</h1>
-    <div class="loader" role="status" aria-live="polite" aria-label="Applying initial changes">
-      <span class="sr-only">Loading…</span>
+<div class="hero-gradient">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-md-8">
+                <h1 class="display-5 mb-2">Hello! Here's your budget overview.</h1>
+                <p class="lead opacity-75">Tracking your finances for {{ current_month }}</p>
+            </div>
+            <div class="col-md-4 text-md-end">
+                <button class="btn btn-light btn-lg rounded-pill px-4 shadow-sm" data-bs-toggle="modal" data-bs-target="#addTransactionModal">
+                    <i class="fas fa-plus me-2"></i> Add Transaction
+                </button>
+            </div>
+        </div>
     </div>
-    <p class="hint">AppWizzy AI is collecting your requirements and applying the first changes.</p>
-    <p class="hint">This page will refresh automatically as the plan is implemented.</p>
-    <p class="runtime">
-      Runtime: Django <code>{{ django_version }}</code> · Python <code>{{ python_version }}</code>
-      — UTC <code>{{ current_time|date:"Y-m-d H:i:s" }}</code>
-    </p>
-  </div>
-</main>
-<footer>
-  Page updated: {{ current_time|date:"Y-m-d H:i:s" }} (UTC)
-</footer>
+</div>
+
+<div class="container py-5">
+    <!-- Stats Row -->
+    <div class="row g-4 mb-5">
+        <div class="col-md-4">
+            <div class="stats-card p-4">
+                <div class="d-flex align-items-center mb-3">
+                    <div class="bg-primary bg-opacity-10 p-3 rounded-circle me-3">
+                        <i class="fas fa-wallet text-primary fs-4"></i>
+                    </div>
+                    <span class="text-muted fw-medium">Total Balance</span>
+                </div>
+                <h2 class="mb-0 {% if balance >= 0 %}income-text{% else %}expense-text{% endif %}">
+                    ${{ balance|floatformat:2 }}
+                </h2>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="stats-card p-4">
+                <div class="d-flex align-items-center mb-3">
+                    <div class="bg-success bg-opacity-10 p-3 rounded-circle me-3">
+                        <i class="fas fa-arrow-down text-success fs-4"></i>
+                    </div>
+                    <span class="text-muted fw-medium">Monthly Income</span>
+                </div>
+                <h2 class="mb-0 income-text">${{ monthly_income|floatformat:2 }}</h2>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="stats-card p-4">
+                <div class="d-flex align-items-center mb-3">
+                    <div class="bg-danger bg-opacity-10 p-3 rounded-circle me-3">
+                        <i class="fas fa-arrow-up text-danger fs-4"></i>
+                    </div>
+                    <span class="text-muted fw-medium">Monthly Expenses</span>
+                </div>
+                <h2 class="mb-0 expense-text">${{ monthly_expense|floatformat:2 }}</h2>
+            </div>
+        </div>
+    </div>
+
+    <!-- Transactions List -->
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h3 class="mb-0">Recent Transactions</h3>
+                <a href="/admin/core/transaction/" class="text-decoration-none text-muted fw-medium">
+                    View All <i class="fas fa-chevron-right ms-1"></i>
+                </a>
+            </div>
+            
+            <div class="table-responsive">
+                <table class="table">
+                    <tbody>
+                        {% for transaction in recent_transactions %}
+                        <tr class="transaction-row {{ transaction.type }} shadow-sm">
+                            <td width="15%">
+                                <div class="fw-bold">{{ transaction.date|date:"M d" }}</div>
+                                <small class="text-muted">{{ transaction.date|date:"Y" }}</small>
+                            </td>
+                            <td>
+                                <div class="fw-semibold">{{ transaction.description|default:"No description" }}</div>
+                                <span class="badge bg-light text-dark rounded-pill">{{ transaction.category.name|default:"Uncategorized" }}</span>
+                            </td>
+                            <td class="text-end" width="20%">
+                                <h5 class="mb-0 {% if transaction.type == 'income' %}income-text{% else %}expense-text{% endif %}">
+                                    {% if transaction.type == 'income' %}+{% else %}-{% endif %}${{ transaction.amount|floatformat:2 }}
+                                </h5>
+                                <small class="text-muted">{{ transaction.get_type_display }}</small>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="3" class="text-center py-5">
+                                <img src="https://illustrations.popsy.co/gray/saving-money.svg" alt="Empty" style="width: 200px;" class="mb-3">
+                                <p class="text-muted">No transactions yet. Start by adding one!</p>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Add Transaction Modal -->
+<div class="modal fade" id="addTransactionModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg" style="border-radius: 1.5rem;">
+            <div class="modal-header border-0 pb-0">
+                <h4 class="modal-title px-3 pt-3">New Entry</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-4">
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label class="form-label text-muted small text-uppercase fw-bold">Amount</label>
+                        {{ form.amount }}
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col">
+                            <label class="form-label text-muted small text-uppercase fw-bold">Type</label>
+                            {{ form.type }}
+                        </div>
+                        <div class="col">
+                            <label class="form-label text-muted small text-uppercase fw-bold">Category</label>
+                            {{ form.category }}
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label text-muted small text-uppercase fw-bold">Date</label>
+                        {{ form.date }}
+                    </div>
+                    <div class="mb-4">
+                        <label class="form-label text-muted small text-uppercase fw-bold">Description</label>
+                        {{ form.description }}
+                    </div>
+                    <div class="px-2">
+                        <button type="submit" class="btn btn-primary-gradient w-100 shadow">Save Transaction</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}

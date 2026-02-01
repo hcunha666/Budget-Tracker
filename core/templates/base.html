@@ -1,25 +1,72 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-  <meta charset="UTF-8">
-  <title>{% block title %}Knowledge Base{% endblock %}</title>
-  {% if project_description %}
-  <meta name="description" content="{{ project_description }}">
-  <meta property="og:description" content="{{ project_description }}">
-  <meta property="twitter:description" content="{{ project_description }}">
-  {% endif %}
-  {% if project_image_url %}
-  <meta property="og:image" content="{{ project_image_url }}">
-  <meta property="twitter:image" content="{{ project_image_url }}">
-  {% endif %}
-  {% load static %}
-  <link rel="stylesheet" href="{% static 'css/custom.css' %}?v={{ deployment_timestamp }}">
-  {% block head %}{% endblock %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}BudgetTracker{% endblock %}</title>
+    
+    {% if project_description %}
+    <meta name="description" content="{{ project_description }}">
+    <meta property="og:description" content="{{ project_description }}">
+    <meta property="twitter:description" content="{{ project_description }}">
+    {% endif %}
+    {% if project_image_url %}
+    <meta property="og:image" content="{{ project_image_url }}">
+    <meta property="twitter:image" content="{{ project_image_url }}">
+    {% endif %}
+
+    {% load static %}
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{% static 'css/custom.css' %}?v={{ deployment_timestamp }}">
+    
+    {% block head %}{% endblock %}
 </head>
-
 <body>
-  {% block content %}{% endblock %}
-</body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom sticky-top py-3">
+        <div class="container">
+            <a class="navbar-brand fw-bold d-flex align-items-center" href="{% url 'home' %}">
+                <div class="bg-primary bg-opacity-10 p-2 rounded-3 me-2">
+                    <i class="fas fa-piggy-bank text-primary"></i>
+                </div>
+                BudgetTracker
+            </a>
+            <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto align-items-center">
+                    <li class="nav-item">
+                        <a class="nav-link px-3" href="{% url 'home' %}">Dashboard</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link px-3" href="/admin/core/category/">Categories</a>
+                    </li>
+                    <li class="nav-item ms-lg-3">
+                        <a class="btn btn-dark rounded-pill px-4" href="/admin/">
+                            Admin <i class="fas fa-user-cog ms-1 small"></i>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
 
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="py-5 bg-white border-top mt-5">
+        <div class="container text-center">
+            <p class="text-muted mb-0">&copy; 2026 BudgetTracker. Built with Django & Flatlogic.</p>
+        </div>
+    </footer>
+
+    <!-- Bootstrap 5 Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    {% block scripts %}{% endblock %}
+</body>
 </html>
